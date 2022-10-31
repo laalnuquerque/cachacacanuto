@@ -1,17 +1,14 @@
 package com.monomyto.cachacascanuto.cachacascanuto.services;
 
-import com.monomyto.cachacascanuto.cachacascanuto.model.dto.ClientesDto;
-import com.monomyto.cachacascanuto.cachacascanuto.model.dto.ItensDto;
-import com.monomyto.cachacascanuto.cachacascanuto.model.dto.VendasDto;
 import com.monomyto.cachacascanuto.cachacascanuto.model.entities.CatalogoEntity;
 import com.monomyto.cachacascanuto.cachacascanuto.model.entities.ClientesEntity;
-import com.monomyto.cachacascanuto.cachacascanuto.model.entities.ItensEntity;
 import com.monomyto.cachacascanuto.cachacascanuto.model.entities.VendasEntity;
 import com.monomyto.cachacascanuto.cachacascanuto.repository.CatalogoRepository;
 import com.monomyto.cachacascanuto.cachacascanuto.repository.ClientesRepository;
 import com.monomyto.cachacascanuto.cachacascanuto.repository.VendasRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -27,19 +24,23 @@ public class VendasService {
         this.catalogoRepository = catalogoRepository;
     }
 
-    public List<VendasEntity> consultarPorNome(String nome){
-        String nomeIdCliente = null;
-        ClientesEntity idCliente = clientesRepository.findByNome(nome);
-        nomeIdCliente = idCliente.getId();
+    public List<List<VendasEntity>> consultarPorNome(String nome) {
+        List<ClientesEntity> listIidCliente = clientesRepository.findArrayByNomeContainingIgnoreCase(nome);
+        List<List<VendasEntity>> vendasEntity = new ArrayList<>();
 
-        List<VendasEntity> consultaVendaCliente = vendasRepository.findByIdCliente(nomeIdCliente);
-        if(consultaVendaCliente.isEmpty()){
-            return null;
-        } else {
-            return consultaVendaCliente;
+        for (ClientesEntity retornoIdCliente : listIidCliente) {
+            String nomeIdCliente = retornoIdCliente.getId();
+//            nomeIdCliente = retornoIdCliente.getId();
+
+            List<VendasEntity> listaConsultaVendaCliente = vendasRepository.findListaByIdCliente(nomeIdCliente);
+            if (!listaConsultaVendaCliente.isEmpty()) {
+                vendasEntity.add(listaConsultaVendaCliente);
+            }
+
         }
-
+        return vendasEntity;
     }
+
 
     public List<VendasEntity> consultarPorNomeProduto(String nome){
         String nomeIdProduto = null;
@@ -64,4 +65,26 @@ public class VendasService {
         }
     }
 
+
+//    Adicionar filtro por range de datas
+//• Adicionar busca textual por nomes de clientes
+//• Adicionar busca textual por nomes de produtos
+//• Adicionar opções de paginação (número da página e número de itens por página)
+
+//    • Para cada produto, retornar o total de vendas desse produto e a quantidade total vendida
+//• Opções de ordenação: Valor total vendido, Quantidade total vendida, crescente ou decrescente
+
+//    • Para cada cliente, retornar o total das vendas para esse cliente
+//    Para cada cliente, retornar os produtos que esse cliente mais comprou, podendo especificar uma
+//    quantidade máxima de itens
+
+//    Ex: se eu especificar 1, deverá retornar apenas o item que o cliente mais comprou. Isso
+//    não altera a estatística de total de vendas, que ainda deve ser feito sob todas as vendas
+//do período.
+//•
+//    Retornar também a quantidade que ele comprou daquele produto, e o valor total das
+//    vendas.
+//•
+//    Permitir filtrar por range de datas (para considerar apenas vendas em um determinado período).
+//    Isso afeta a estatística de totais de vendas.
 }
