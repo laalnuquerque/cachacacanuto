@@ -8,8 +8,11 @@ import com.monomyto.cachacascanuto.cachacascanuto.repository.ClientesRepository;
 import com.monomyto.cachacascanuto.cachacascanuto.repository.VendasRepository;
 import org.springframework.stereotype.Component;
 
+
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.monomyto.cachacascanuto.cachacascanuto.model.enums.Respostas.RESPOSTANOK;
 
 @Component
 public class VendasService {
@@ -30,17 +33,14 @@ public class VendasService {
 
         for (ClientesEntity retornoIdCliente : listIidCliente) {
             String nomeIdCliente = retornoIdCliente.getId();
-//            nomeIdCliente = retornoIdCliente.getId();
 
             List<VendasEntity> listaConsultaVendaCliente = vendasRepository.findListaByIdCliente(nomeIdCliente);
             if (!listaConsultaVendaCliente.isEmpty()) {
                 vendasEntity.add(listaConsultaVendaCliente);
             }
-
         }
         return vendasEntity;
     }
-
 
     public List<VendasEntity> consultarPorNomeProduto(String nome){
         String nomeIdProduto = null;
@@ -53,10 +53,17 @@ public class VendasService {
         } else {
             return consultaVendaProduto;
         }
-
     }
 
-    public List<VendasEntity> consultarData(String dataInicial, String dataFinal){
+    public List<VendasEntity> consultarData(String dataInicial){
+        List<VendasEntity> vendasPorData = vendasRepository.findByDataContainingIgnoreCase(dataInicial);
+        if(vendasPorData.isEmpty()){
+            return null;
+        }
+        return vendasPorData;
+    }
+
+    public List<VendasEntity> consultarDataPorRange(String dataInicial, String dataFinal){
         List<VendasEntity> vendasPorData = vendasRepository.findByDataBetween(dataInicial, dataFinal);
         if(vendasPorData.isEmpty()){
             return null;
@@ -66,7 +73,7 @@ public class VendasService {
     }
 
 
-//    Adicionar filtro por range de datas
+//  Adicionar filtro por range de datas
 //• Adicionar busca textual por nomes de clientes
 //• Adicionar busca textual por nomes de produtos
 //• Adicionar opções de paginação (número da página e número de itens por página)

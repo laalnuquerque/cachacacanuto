@@ -1,6 +1,5 @@
 package com.monomyto.cachacascanuto.cachacascanuto.controller;
 
-import com.monomyto.cachacascanuto.cachacascanuto.services.ClientesService;
 import com.monomyto.cachacascanuto.cachacascanuto.services.VendasService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,12 +25,29 @@ public class VendasController {
 
     @GetMapping(value = "/consultapornome/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity consultarNomeCliente(@PathVariable(name = "id") String nome){
-        if (vendasService.consultarPorNome(nome) == null ){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(RESPOSTANOK);
-        } else {
+        if (!vendasService.consultarPorNome(nome).isEmpty() ){
             return ResponseEntity.ok((vendasService.consultarPorNome(nome)));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(RESPOSTANOK);
         }
     }
 
+    @GetMapping(value = "/consultapordata/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity consultarVendaPorData(@PathVariable(name = "id")   String dataInicial){
+        if (!vendasService.consultarData(dataInicial).isEmpty() ){
+            return ResponseEntity.ok((vendasService.consultarData(dataInicial)));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(RESPOSTANOK);
+        }
+    }
 
+    @GetMapping(value = "/consultapordata/{id}/{data}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity consultarVendaPorData(@PathVariable(name = "id")   String dataInicial,
+                                                @PathVariable(name = "data") String dataFinal){
+        if (!vendasService.consultarDataPorRange(dataInicial, dataFinal).isEmpty() ){
+            return ResponseEntity.ok((vendasService.consultarDataPorRange(dataInicial, dataFinal)));
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(RESPOSTANOK);
+        }
+    }
 }
